@@ -10,8 +10,8 @@
  
 🎥 **WATCH ME COMPLETE THIS LAB HERE:**
  
-<!-- TODO: replace this line with the Loom link once the video is recorded -->
- 
+https://www.loom.com/share/fb7e03fc7bc0443faffc99182365add3
+
 ## 📋 Table of Contents
 - [Objective](#-objective)
 - [Architecture Diagram](#-architecture-diagram)
