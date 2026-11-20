@@ -6,7 +6,7 @@
 ![Cost Management](https://img.shields.io/badge/Cost_Management-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)
 ![NIST CSF](https://img.shields.io/badge/NIST_CSF-5C2D91?style=for-the-badge)
  
-**Author:** Krishnadeep Chudasama · **Estimated Time:** 60–75 minutes · **Difficulty:** Beginner
+**Author:** Krishnadeep Chudasama · **Estimated Time:** 60–75 minutes
  
 🎥 **WATCH ME COMPLETE THIS LAB HERE:**
  
@@ -35,7 +35,7 @@ In this lab, you will put three governance controls on a single resource group: 
  
 ## 🏗️ Architecture Diagram
  
-![Lab 05 architecture: Junior Developer blocked by the Reader role, Owner blocked by the Restrict-VM-Sizes policy, budget emails at 80% actual and 100% forecasted](images/lab05-architecture.png)
+![Lab 05 architecture: Junior Developer blocked by the Reader role, Owner blocked by the Restrict-VM-Sizes policy, budget emails at 80% actual and 100% forecasted](lab05-architecture.png)
  
 **How to read it:** Each row is a different control on `rg-lab05-gov-krish`. The Junior Developer tries to create a VM and RBAC blocks it (`AuthorizationFailed`). The Owner tries to deploy a VM size that is not on the allowed list and Policy blocks it (`RequestDisallowedByPolicy`). The budget watches spend and emails when a threshold is crossed. It warns, it never blocks.
  
@@ -70,7 +70,7 @@ Every control in this lab is scoped to this resource group, so nothing else in t
 3. **Display name:** `Junior Developer`
 4. Uncheck auto-generate password and set one you will remember.
 5. Click **Review + create** -> **Create**.
-![Entra ID Users list showing the Junior Developer account next to the admin account](images/lab05-01-entra-user.png)
+![Entra ID Users list showing the Junior Developer account next to the admin account](lab05-01-entra-user.png)
  
 A new user has **no access at all** until you grant it. Azure is deny-by-default.
  
@@ -79,7 +79,7 @@ A new user has **no access at all** until you grant it. Azure is deny-by-default
 2. Click **+ Add** -> **Add role assignment**.
 3. **Role:** `Reader`. **Members:** `Junior Developer`.
 4. Click **Review + assign** twice.
-![IAM on rg-lab05-gov-krish: Junior Developer holds Reader on This resource, Owner entries are inherited from the subscription](images/lab05-02-reader-role.png)
+![IAM on rg-lab05-gov-krish: Junior Developer holds Reader on This resource, Owner entries are inherited from the subscription](lab05-02-reader-role.png)
  
 The scope column reads **This resource**, meaning the Reader role applies to this resource group only. The two Owner entries are inherited from the subscription.
  
@@ -89,7 +89,7 @@ The scope column reads **This resource**, meaning the Reader role applies to thi
 3. Start creating a resource (the SOP uses a Storage Account; I used a Virtual Machine) and click **Review + create**.
 **Expected result:** a red validation error, `AuthorizationFailed`.
  
-![Errors blade signed in as the Junior Developer: AuthorizationFailed on Microsoft.Resources/deployments/validate/action](images/lab05-03-authorization-failed.png)
+![Errors blade signed in as the Junior Developer: AuthorizationFailed on Microsoft.Resources/deployments/validate/action](lab05-03-authorization-failed.png)
  
 The Reader role can view but not create. This is the **Protect** function working.
  
@@ -114,7 +114,7 @@ The Reader role can view but not create. This is the **Protect** function workin
 3. Click **Review + create**.
 **Expected result:** "Validation failed", with `RequestDisallowedByPolicy` naming `Restrict-VM-Sizes`.
  
-![Validation failed as the admin: Resource was disallowed by policy, Restrict-VM-Sizes. The highlighted price is about 0.108 USD per hour](images/lab05-04-policy-blocked.png)
+![Validation failed as the admin: Resource was disallowed by policy, Restrict-VM-Sizes. The highlighted price is about 0.108 USD per hour](lab05-04-policy-blocked.png)
  
 This was my **Owner** account being blocked. RBAC can be worked around with higher rights; a Deny policy cannot. The portal estimated about US$0.108 an hour for that size, roughly US$79 a month if left running.
  
@@ -126,7 +126,7 @@ Then retry with `Standard_B1s`: validation should pass. (You do not need to fini
 3. **Alert condition 1:** Type **Actual**, **80%** of budget.
 4. **Alert condition 2:** Type **Forecasted**, **100%** of budget.
 5. **Alert recipients:** your email. Click **Create**.
-![Budget summary: CA$50, resets monthly, alerts at 80% actual (CA$40) and 100% forecasted (CA$50), action group None](images/lab05-05-budget.png)
+![Budget summary: CA$50, resets monthly, alerts at 80% actual (CA$40) and 100% forecasted (CA$50), action group None](lab05-05-budget.png)
  
 | Alert type | When it fires |
 |---|---|
@@ -135,13 +135,13 @@ Then retry with `Standard_B1s`: validation should pass. (You do not need to fini
  
 **What an alert looks like.** The email below is **not** from this lab's budget (which is at CA$0.00). It came from a separate budget on my account named `Monthly` with a $0.25 threshold, and fired when spend reached $1.08. It shows the shape of Detect and Respond: an email arrives asking me to review, and nothing else happens until a human acts.
  
-![Azure budget alert email: evaluated amount 1.08 dollars against a 0.25 dollar threshold](images/lab05-06-budget-alert-email.png)
+![Azure budget alert email: evaluated amount 1.08 dollars against a 0.25 dollar threshold](lab05-06-budget-alert-email.png)
  
 ---
  
 ## 🧭 NIST CSF Mapping
  
-![NIST CSF mapping of the lab: Identify, Protect, Detect, Respond, Recover with evidence and status](images/lab05-nist.png)
+![NIST CSF mapping of the lab: Identify, Protect, Detect, Respond, Recover with evidence and status](lab05-nist.png)
  
 | Function | In this lab | Status |
 |---|---|---|
@@ -164,20 +164,7 @@ Things worth knowing before you treat this as production-ready:
 - **Scope matters.** I scoped everything to one resource group. Assign at subscription or management group level only after the pattern is proven.
 ---
  
-## 🛠️ Troubleshooting
-- **Issue:** "The Junior Developer can still create resources."
-  - **Fix:** The role was probably assigned at the wrong scope. Check `rg-lab05-gov-krish` -> Access control (IAM) -> Role assignments, and confirm Reader is listed there with scope **This resource**.
-- **Issue:** "The policy is not blocking the VM."
-  - **Fix:** Propagation takes 10 to 30 minutes. Wait and retry, then confirm `Restrict-VM-Sizes` appears under Policy -> Assignments with your resource group as the scope.
-- **Issue:** "I cannot find Budgets in the resource group menu."
-  - **Fix:** Search for **Cost Management + Billing** in the main search bar and open Budgets from there.
-- **Issue:** "Incognito login asks me to set up MFA."
-  - **Fix:** This is expected on first sign-in. Complete the setup.
-- **Issue:** "Policy definition not found."
-  - **Fix:** Search `virtual machine size` without quotes and pick the definition that mentions allowed sizes or SKUs.
-- **Issue:** "Budget creation fails with a permissions error."
-  - **Fix:** Confirm your account has the Owner or Cost Management Contributor role on the subscription.
----
+
  
 ## 🧹 Clean Up Resources
 *Important: Always clean up unused resources and identities.*
